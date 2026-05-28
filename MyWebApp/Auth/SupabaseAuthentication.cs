@@ -4,8 +4,8 @@ namespace MyWebApp.Auth
 {
     public static class SupabaseAuthentication
     {
-        private static string url = "https://ygenbnjzzzesunqatuof.supabase.co";
-        private static string key = "sb_publishable_llpmf9LsrCW1j83wNmQvlw_UkEk3s3G";
+        private static string url = "";
+        private static string key = "";
 
         public static async Task<Supabase.Gotrue.Session> SignIn(string txtEmail, string txtPwd)
         {
