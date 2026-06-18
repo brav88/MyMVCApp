@@ -1,0 +1,141 @@
+﻿@model Ticket
+
+@{
+    ViewData["Title"] = "Ticket Detail";
+}
+
+<div class="container py-5" style="max-width: 900px;">
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="badge bg-secondary text-uppercase small">@Model.TicketType</span>
+                <span class="text-muted fw-bold">#@Model.Id</span>
+            </div>
+            <h1 class="h2 text-dark mb-0 fw-bold">@Model.Title</h1>
+        </div>
+
+        <div class="d-flex gap-2">
+            @{
+                var statusClass = Model.Status?.ToLower() == "open" || Model.Status?.ToLower() == "abierto" ? "bg-success" : "bg-dark";
+                var priorityClass = Model.Priority?.ToLower() == "high" || Model.Priority?.ToLower() == "alta" ? "bg-danger" :
+                                    Model.Priority?.ToLower() == "medium" || Model.Priority?.ToLower() == "media" ? "bg-warning text-dark" : "bg-info text-dark";
+            }
+            <span class="badge @statusClass px-3 py-2 rounded fs-6 fw-normal">@Model.Status</span>
+            <span class="badge @priorityClass px-3 py-2 rounded fs-6 fw-normal">@Model.Priority</span>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body p-4">
+
+            <div class="mb-4">
+                <h5 class="text-muted small text-uppercase fw-bold tracking-wider mb-2">Descripción</h5>
+                <div class="p-3 bg-light rounded-3 text-secondary border-start border-primary border-3" style="white-space: pre-line;">
+                    @(string.IsNullOrEmpty(Model.Description) ? "<em>El autor no proporcionó ninguna descripción para este ticket.</em>" : Model.Description)
+                </div>
+            </div>
+
+            <hr class="my-4 text-muted opacity-25">
+
+            <div class="row g-4">
+                <div class="col-sm-6 col-md-3">
+                    <span class="text-muted d-block small text-uppercase fw-semibold mb-1">Creado Por</span>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-person text-secondary"></i>
+                        <span class="text-dark fw-medium text-truncate" title="@Model.CreatedBy">@(Model.CreatedBy ?? "Sistema")</span>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-md-3">
+                    <span class="text-muted d-block small text-uppercase fw-semibold mb-1">Asignado A</span>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-person-badge text-primary"></i>
+                        <span class="text-dark fw-medium text-truncate" title="@Model.AssignedTo">@(Model.AssignedTo ?? "Sin asignar")</span>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-md-3">
+                    <span class="text-muted d-block small text-uppercase fw-semibold mb-1">Fecha de Entrega</span>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-calendar-event text-danger"></i>
+                        <span class="text-dark fw-medium">
+                            @(Model.DueDate.HasValue ? Model.DueDate.Value.ToString("dd MMM yyyy") : "Sin fecha límite")
+                        </span>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-md-3">
+                    <span class="text-muted d-block small text-uppercase fw-semibold mb-1">Última Actualización</span>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-clock-history text-muted"></i>
+                        <span class="text-muted small">@Model.UpdatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="card-footer bg-light border-0 px-4 py-3 d-flex justify-content-between align-items-center">
+            <span class="text-muted small">Creado el @Model.CreatedAt.ToString("dd MMMM yyyy 'a las' HH:mm")</span>
+            <button class="btn btn-outline-secondary btn-sm px-3">
+                <i class="bi bi-pencil me-1"></i> Editar Información
+            </button>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3 border-bottom-0">
+            <h5 class="card-title mb-0 text-dark fw-bold">
+                <i class="bi bi-chat-right-text text-primary me-2"></i>Comentarios y Discusión (@(Model.Comments?.Count ?? 0))
+            </h5>
+        </div>
+        <div class="card-body p-4 pt-2">
+
+            <div class="timeline">
+                @foreach (var comment in Model.Comments)
+                {
+                    <div class="d-flex mb-4">
+                        <div class="flex-shrink-0 me-3">
+                            <img src="https://avatars.githubusercontent.com/u/77076418?v=4"
+                                 alt="Avatar de usuario"
+                                 style="width:38px; height:38px;"
+                                 class="rounded-circle border shadow-sm">
+                        </div>
+                        <div class="flex-grow-1 p-3 bg-light rounded-3 border">
+                            <div class="d-flex flex-wrap justify-content-between align-items-center mb-1 gap-1">
+                                <strong class="text-dark small">@comment.CreatedBy</strong>
+                                <span class="text-muted" style="font-size: 0.75rem;">
+                                    @(comment.CreatedAt != null ? comment.CreatedAt.ToString("dd MMM, yyyy HH:mm") : "Reciente")
+                                </span>
+                            </div>
+                            <p class="mb-0 text-secondary" style="font-size: 0.95rem; white-space: pre-line;">
+                                @(string.IsNullOrEmpty(comment.CommentText) ? "<em>Sin contenido en este comentario.</em>" : comment.CommentText)
+                            </p>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="d-flex mb-4">
+                <div class="flex-shrink-0 me-3">
+                    <img src="https://avatars.githubusercontent.com/u/77076418?v=4"
+                         alt="Avatar de usuario"
+                         style="width:38px; height:38px;"
+                         class="rounded-circle border shadow-sm">
+                </div>
+                <div class="flex-grow-1 p-3 bg-light rounded-3 border">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-1 gap-1">
+                        <form action="PostComment" method="post">
+                            <div class="mb-3">
+                                <input name="ticketId" type="hidden" value="@Model.Id" />
+                                <label for="exampleFormControlTextarea1" class="form-label">Anything to add?</label>
+                                <textarea name="commentText" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

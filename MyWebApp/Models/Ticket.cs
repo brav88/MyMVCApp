@@ -2,6 +2,7 @@
 using Supabase;
 using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
+using Supabase.Postgrest.Responses;
 
 namespace MyWebApp.Models
 {
@@ -40,7 +41,28 @@ namespace MyWebApp.Models
 
         [Column("due_date")]
         public DateTime? DueDate { get; set; }
-    } 
+
+        public List<Comment>? Comments { get; set; }
+    }
+
+    [Table("comments")]
+    public class Comment : BaseModel
+    {
+        [PrimaryKey("id", false)] // false indica que es auto-generado por la BD (Identity)
+        public long Id { get; set; }
+
+        [Column("ticket_id")]
+        public long TicketId { get; set; }
+
+        [Column("commment_text")]
+        public string? CommentText { get; set; }
+
+        [Column("created_by")]
+        public string? CreatedBy { get; set; } // O puedes usar Guid? si prefieres tipado estricto para el UUID
+
+        [Column("created_at")]
+        public DateTime CreatedAt { get; set; }
+    }
 }
 
   
