@@ -8,8 +8,6 @@ namespace MyWebApp.Controllers
     {
         public async Task<IActionResult> Index()
         {
-            //await TicketService.getAll();
-
             return View();
         }
 
@@ -17,7 +15,7 @@ namespace MyWebApp.Controllers
         public IActionResult ValidateLogin(User user)
         {
             Supabase.Gotrue.Session? session = SupabaseAuthentication.SignIn(user.Email, user.Pwd).Result;
-            if (session != null
+            
             if (session != null)
             {
                 return RedirectToAction("Index", "Home");
