@@ -1,0 +1,16 @@
+﻿@using MyWebApp.Services
+
+@{
+    // Si pasamos un arreglo desde el controlador vía ViewData, lo usamos.
+    // Si no, usamos el modelo que traiga o una lista vacía por defecto.
+    var navList = ViewData["CustomNavMenu"] as List<NavigationPages> ?? Model ?? new List<NavigationPages>();    
+}
+
+<ul class="navbar-nav flex-grow-1">
+    @foreach (var @item in navList)
+    {
+        <li class ="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-controller="@item.Controller" asp-action="@item.Action">@item.Title</a>
+        </li>
+    }
+</ul>

@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using MyWebApp.Models;
 using MyWebApp.Services;
+using Newtonsoft.Json;
+using Supabase.Gotrue;
 using System.Diagnostics;
 
 namespace MyWebApp.Controllers
@@ -9,6 +11,13 @@ namespace MyWebApp.Controllers
     {
         public IActionResult Index()
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("session")))
+                return RedirectToAction("Index", "Login");
+
+            Supabase.Gotrue.Session? session = JsonConvert.DeserializeObject<Session>(HttpContext.Session.GetString("session"));
+
+            ViewData["CustomNavMenu"] = NavigationService.GetMenuPages(2);
+
             List<Hotel> hotels = HotelService.getAll();
 
             return View(hotels);

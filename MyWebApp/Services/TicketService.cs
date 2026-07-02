@@ -1,6 +1,7 @@
 ﻿using MyWebApp.Models;
 using MyWebApp.SupabaseClient;
 using Supabase;
+using System.Xml.Linq;
 
 namespace MyWebApp.Services
 {
@@ -37,7 +38,16 @@ namespace MyWebApp.Services
 
             await client.InitializeAsync();
 
-            var result = await client.From<Comment>().Insert(comment);          
+            await client.From<Comment>().Insert(comment);
+        }
+
+        public static async void deleteComment(int commentId)
+        {
+            Client client = SupabClient.getSupabaseClient();
+
+            await client.InitializeAsync();
+
+            await client.From<Comment>().Where(x => x.Id == commentId).Delete();
         }
     }
 }

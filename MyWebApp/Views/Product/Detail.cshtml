@@ -6,9 +6,9 @@
 
 <div class="container py-5">
     <div class="card shadow">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
             <h3 class="card-title mb-0">Edit Product Details</h3>
-            <span class="badge bg-light text-primary fs-6">ID: @Model.ProductId</span>
+            <span class="badge bg-light text-dark fs-6">ID: @Model.ProductId</span>
         </div>
         <div class="card-body">
             <form asp-action="Edit" method="post" class="needs-validation" novalidate>
@@ -129,11 +129,11 @@
                 </div>
 
                 <div class="d-flex justify-content-end gap-2 border-top pt-3">
-                    <a asp-action="Index" class="btn btn-secondary">
-                        <i class="bi bi-arrow-left"></i> Cancel
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i> Back to Products
                     </a>
                     <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-save"></i> Save Changes
+                        <i class="bi bi-save me-1"></i> Save Changes
                     </button>
                 </div>
             </form>

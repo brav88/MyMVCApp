@@ -1,7 +1,23 @@
-﻿@model Ticket
+@model Ticket
 
 @{
     ViewData["Title"] = "Ticket Detail";
+
+    string statusClass = Model.Status?.ToLower() switch
+    {
+        "open" or "abierto"             => "bg-success",
+        "in progress" or "en progreso"  => "bg-warning text-dark",
+        "closed" or "cerrado" or "done" => "bg-secondary",
+        "blocked" or "bloqueado"        => "bg-danger",
+        _                               => "bg-light text-dark border"
+    };
+    string priorityClass = Model.Priority?.ToLower() switch
+    {
+        "high" or "alta"    => "bg-danger",
+        "medium" or "media" => "bg-warning text-dark",
+        "low" or "baja"     => "bg-info text-dark",
+        _                   => "bg-light text-dark border"
+    };
 }
 
 <div class="container py-5" style="max-width: 900px;">
@@ -16,11 +32,6 @@
         </div>
 
         <div class="d-flex gap-2">
-            @{
-                var statusClass = Model.Status?.ToLower() == "open" || Model.Status?.ToLower() == "abierto" ? "bg-success" : "bg-dark";
-                var priorityClass = Model.Priority?.ToLower() == "high" || Model.Priority?.ToLower() == "alta" ? "bg-danger" :
-                                    Model.Priority?.ToLower() == "medium" || Model.Priority?.ToLower() == "media" ? "bg-warning text-dark" : "bg-info text-dark";
-            }
             <span class="badge @statusClass px-3 py-2 rounded fs-6 fw-normal">@Model.Status</span>
             <span class="badge @priorityClass px-3 py-2 rounded fs-6 fw-normal">@Model.Priority</span>
         </div>
@@ -30,9 +41,16 @@
         <div class="card-body p-4">
 
             <div class="mb-4">
-                <h5 class="text-muted small text-uppercase fw-bold tracking-wider mb-2">Descripción</h5>
+                <h5 class="text-muted small text-uppercase fw-bold mb-2">Description</h5>
                 <div class="p-3 bg-light rounded-3 text-secondary border-start border-primary border-3" style="white-space: pre-line;">
-                    @(string.IsNullOrEmpty(Model.Description) ? "<em>El autor no proporcionó ninguna descripción para este ticket.</em>" : Model.Description)
+                    @if (string.IsNullOrEmpty(Model.Description))
+                    {
+                        <em>No description provided for this ticket.</em>
+                    }
+                    else
+                    {
+                        @Model.Description
+                    }
                 </div>
             </div>
 
@@ -40,33 +58,33 @@
 
             <div class="row g-4">
                 <div class="col-sm-6 col-md-3">
-                    <span class="text-muted d-block small text-uppercase fw-semibold mb-1">Creado Por</span>
+                    <span class="text-muted d-block small text-uppercase fw-semibold mb-1">Created By</span>
                     <div class="d-flex align-items-center gap-2">
                         <i class="bi bi-person text-secondary"></i>
-                        <span class="text-dark fw-medium text-truncate" title="@Model.CreatedBy">@(Model.CreatedBy ?? "Sistema")</span>
+                        <span class="text-dark fw-medium text-truncate" title="@Model.CreatedBy">@(Model.CreatedBy ?? "System")</span>
                     </div>
                 </div>
 
                 <div class="col-sm-6 col-md-3">
-                    <span class="text-muted d-block small text-uppercase fw-semibold mb-1">Asignado A</span>
+                    <span class="text-muted d-block small text-uppercase fw-semibold mb-1">Assigned To</span>
                     <div class="d-flex align-items-center gap-2">
                         <i class="bi bi-person-badge text-primary"></i>
-                        <span class="text-dark fw-medium text-truncate" title="@Model.AssignedTo">@(Model.AssignedTo ?? "Sin asignar")</span>
+                        <span class="text-dark fw-medium text-truncate" title="@Model.AssignedTo">@(Model.AssignedTo ?? "Unassigned")</span>
                     </div>
                 </div>
 
                 <div class="col-sm-6 col-md-3">
-                    <span class="text-muted d-block small text-uppercase fw-semibold mb-1">Fecha de Entrega</span>
+                    <span class="text-muted d-block small text-uppercase fw-semibold mb-1">Due Date</span>
                     <div class="d-flex align-items-center gap-2">
                         <i class="bi bi-calendar-event text-danger"></i>
                         <span class="text-dark fw-medium">
-                            @(Model.DueDate.HasValue ? Model.DueDate.Value.ToString("dd MMM yyyy") : "Sin fecha límite")
+                            @(Model.DueDate.HasValue ? Model.DueDate.Value.ToString("dd MMM yyyy") : "No due date")
                         </span>
                     </div>
                 </div>
 
                 <div class="col-sm-6 col-md-3">
-                    <span class="text-muted d-block small text-uppercase fw-semibold mb-1">Última Actualización</span>
+                    <span class="text-muted d-block small text-uppercase fw-semibold mb-1">Last Updated</span>
                     <div class="d-flex align-items-center gap-2">
                         <i class="bi bi-clock-history text-muted"></i>
                         <span class="text-muted small">@Model.UpdatedAt.ToString("dd/MM/yyyy HH:mm")</span>
@@ -76,66 +94,77 @@
 
         </div>
         <div class="card-footer bg-light border-0 px-4 py-3 d-flex justify-content-between align-items-center">
-            <span class="text-muted small">Creado el @Model.CreatedAt.ToString("dd MMMM yyyy 'a las' HH:mm")</span>
-            <button class="btn btn-outline-secondary btn-sm px-3">
-                <i class="bi bi-pencil me-1"></i> Editar Información
-            </button>
+            <span class="text-muted small">Created on @Model.CreatedAt.ToString("dd MMMM yyyy 'at' HH:mm")</span>
+            <div class="d-flex gap-2">
+                <a asp-action="Index" class="btn btn-outline-secondary btn-sm px-3">
+                    <i class="bi bi-arrow-left me-1"></i> Back to Tickets
+                </a>
+                <button class="btn btn-outline-primary btn-sm px-3">
+                    <i class="bi bi-pencil me-1"></i> Edit
+                </button>
+            </div>
         </div>
     </div>
 
     <div class="card shadow-sm border-0">
-        <div class="card-header bg-white py-3 border-bottom-0">
+        <div class="card-header bg-white py-3 border-bottom">
             <h5 class="card-title mb-0 text-dark fw-bold">
-                <i class="bi bi-chat-right-text text-primary me-2"></i>Comentarios y Discusión (@(Model.Comments?.Count ?? 0))
+                <i class="bi bi-chat-right-text text-primary me-2"></i>Comments (@(Model.Comments?.Count ?? 0))
             </h5>
         </div>
-        <div class="card-body p-4 pt-2">
+        <div class="card-body p-4">
 
-            <div class="timeline">
-                @foreach (var comment in Model.Comments)
-                {
-                    <div class="d-flex mb-4">
-                        <div class="flex-shrink-0 me-3">
-                            <img src="https://avatars.githubusercontent.com/u/77076418?v=4"
-                                 alt="Avatar de usuario"
-                                 style="width:38px; height:38px;"
-                                 class="rounded-circle border shadow-sm">
-                        </div>
-                        <div class="flex-grow-1 p-3 bg-light rounded-3 border">
-                            <div class="d-flex flex-wrap justify-content-between align-items-center mb-1 gap-1">
-                                <strong class="text-dark small">@comment.CreatedBy</strong>
-                                <span class="text-muted" style="font-size: 0.75rem;">
-                                    @(comment.CreatedAt != null ? comment.CreatedAt.ToString("dd MMM, yyyy HH:mm") : "Reciente")
-                                </span>
+            @if (Model.Comments != null && Model.Comments.Any())
+            {
+                <div class="mb-4">
+                    @foreach (var comment in Model.Comments)
+                    {
+                        <div class="d-flex mb-3">
+                            <div class="flex-shrink-0 me-3">
+                                <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white fw-bold"
+                                     style="width:38px; height:38px; font-size:0.85rem;">
+                                    <i class="bi bi-person-fill"></i>
+                                </div>
                             </div>
-                            <p class="mb-0 text-secondary" style="font-size: 0.95rem; white-space: pre-line;">
-                                @(string.IsNullOrEmpty(comment.CommentText) ? "<em>Sin contenido en este comentario.</em>" : comment.CommentText)
-                            </p>
+                            <div class="flex-grow-1 p-3 bg-light rounded-3 border">
+                                <div class="d-flex flex-wrap justify-content-between align-items-center mb-1 gap-1">
+                                    <strong class="text-dark small">@(comment.CreatedBy ?? "Anonymous")</strong>
+                                    <span class="text-muted" style="font-size: 0.75rem;">
+                                        @(comment.CreatedAt != default ? comment.CreatedAt.ToString("dd MMM yyyy, HH:mm") : "—")
+                                    </span>
+                                    @if (comment.CreatedBy.Equals(@Model.ActiveSessionUserId))
+                                    {
+                                        <a href="/Ticket/DeleteComment?ticketId=@comment.TicketId&commentId=@comment.Id"><i class="bi bi-trash3-fill"></i></a>
+                                    }                                    
+                                </div>
+                                <p class="mb-0 text-secondary" style="font-size: 0.95rem; white-space: pre-line;">
+                                    @if (string.IsNullOrEmpty(comment.CommentText))
+                                    {
+                                        <em>No content in this comment.</em>
+                                    }
+                                    else
+                                    {
+                                        @comment.CommentText
+                                    }
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                }
-            </div>
+                    }
+                </div>
+                <hr class="my-3 opacity-25">
+            }
 
-            <div class="d-flex mb-4">
-                <div class="flex-shrink-0 me-3">
-                    <img src="https://avatars.githubusercontent.com/u/77076418?v=4"
-                         alt="Avatar de usuario"
-                         style="width:38px; height:38px;"
-                         class="rounded-circle border shadow-sm">
+            <h6 class="text-muted small text-uppercase fw-bold mb-3">Add a Comment</h6>
+            <form action="PostComment" method="post">
+                <input name="ticketId" type="hidden" value="@Model.Id" />
+                <textarea name="commentText" class="form-control mb-2" rows="3" placeholder="Write your comment here..."></textarea>
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary btn-sm px-4">
+                        <i class="bi bi-send me-1"></i> Post Comment
+                    </button>
                 </div>
-                <div class="flex-grow-1 p-3 bg-light rounded-3 border">
-                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-1 gap-1">
-                        <form action="PostComment" method="post">
-                            <div class="mb-3">
-                                <input name="ticketId" type="hidden" value="@Model.Id" />
-                                <label for="exampleFormControlTextarea1" class="form-label">Anything to add?</label>
-                                <textarea name="commentText" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Save</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+            </form>
+
         </div>
     </div>
 </div>

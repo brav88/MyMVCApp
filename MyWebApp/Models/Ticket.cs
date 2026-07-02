@@ -43,6 +43,8 @@ namespace MyWebApp.Models
         public DateTime? DueDate { get; set; }
 
         public List<Comment>? Comments { get; set; }
+
+        public string ActiveSessionUserId { get; set; }
     }
 
     [Table("comments")]
