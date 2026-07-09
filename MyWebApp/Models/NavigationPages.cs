@@ -5,5 +5,6 @@
         public String Controller{ get; set; }
         public String Action { get; set; }
         public String Title { get; set; }
+        public String Attribute { get; set; }
     }
 }

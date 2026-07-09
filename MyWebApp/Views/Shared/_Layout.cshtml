@@ -29,6 +29,22 @@
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
+    </div>   
+
+    @* OFFCANVA *@
+    <div class="offcanvas offcanvas-end" data-bs-backdrop="static" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <img src="@ViewData["photo"]"
+                 class="rounded float-start" style="width:100px;height:100px" alt="...">
+            <form asp-controller="Profile" asp-action="UploadPhoto" method="post" enctype="multipart/form-data">
+                <input type="file" name="photo" />
+                <button type="submit">upload</button>
+            </form>
+        </div>
     </div>
 
     <footer class="border-top footer text-muted">

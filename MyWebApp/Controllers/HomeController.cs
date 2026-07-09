@@ -16,6 +16,8 @@ namespace MyWebApp.Controllers
 
             Supabase.Gotrue.Session? session = JsonConvert.DeserializeObject<Session>(HttpContext.Session.GetString("session"));
 
+            ViewData["photo"] = HttpContext.Session.GetString("photoPath");             
+
             ViewData["CustomNavMenu"] = NavigationService.GetMenuPages(2);
 
             List<Hotel> hotels = HotelService.getAll();

@@ -14,6 +14,8 @@ namespace MyWebApp.Controllers
             if (string.IsNullOrEmpty(HttpContext.Session.GetString("session")))
                 return RedirectToAction("Index", "Login");
 
+            ViewData["CustomNavMenu"] = NavigationService.GetMenuPages(2);
+
             List<Ticket> ticketList = TicketService.getAll().Result;
 
             return View(ticketList);
@@ -25,6 +27,8 @@ namespace MyWebApp.Controllers
                 return RedirectToAction("Index", "Login");
 
             Supabase.Gotrue.Session? session = JsonConvert.DeserializeObject<Session>(HttpContext.Session.GetString("session"));
+
+            ViewData["CustomNavMenu"] = NavigationService.GetMenuPages(2);
 
             Ticket detail = TicketService.getTicketById(id).Result;
 
