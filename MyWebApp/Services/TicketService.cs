@@ -7,44 +7,36 @@ namespace MyWebApp.Services
 {
     public static class TicketService
     {
-        public static async Task<List<Ticket>> getAll()
-        {
-            Client client = SupabClient.getSupabaseClient();
+        static Client client = SupabClient.GetSupabaseClient();
 
+        public static async Task<List<Ticket>> GetAll()
+        {
             await client.InitializeAsync();
 
-            var result = await client.From<Ticket>().Get();
-            return result.Models;
+            return (await client.From<Ticket>().Get()).Models;
         }
 
-        public static async Task<Ticket> getTicketById(int id)
+        public static async Task<Ticket> GetTicketById(int id)
         {
-            Client client = SupabClient.getSupabaseClient();
-
             await client.InitializeAsync();
 
-            var result = await client.From<Ticket>().Where(x => x.Id == id).Get();
+            var ticket = (await client.From<Ticket>().Where(x => x.Id == id).Get()).Model;
 
-            var comments = await client.From<Comment>().Where(x => x.TicketId == id).Get();
-
-            result.Model?.Comments = comments.Models;
-
-            return result.Model;
+            if (ticket is not null)
+                ticket.Comments = (await client.From<Comment>().Where(x => x.TicketId == id).Get()).Models;
+            
+            return ticket;           
         }
 
-        public static async void postComment(Comment comment)
+        public static async void PostComment(Comment comment)
         {
-            Client client = SupabClient.getSupabaseClient();
-
             await client.InitializeAsync();
 
             await client.From<Comment>().Insert(comment);
         }
 
-        public static async void deleteComment(int commentId)
+        public static async void DeleteComment(int commentId)
         {
-            Client client = SupabClient.getSupabaseClient();
-
             await client.InitializeAsync();
 
             await client.From<Comment>().Where(x => x.Id == commentId).Delete();

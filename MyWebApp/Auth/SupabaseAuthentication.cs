@@ -9,7 +9,7 @@ namespace MyWebApp.Auth
         {
             try
             {
-                Client client = SupabClient.getSupabaseClient();
+                Client client = SupabClient.GetSupabaseClient();
 
                 await client.InitializeAsync();
 

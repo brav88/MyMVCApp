@@ -10,14 +10,12 @@ namespace MyWebApp.Controllers
 {
     public class ProfileController : Controller
     {
-        public IActionResult UploadPhoto(IFormFile photo)
+        public async Task<IActionResult> UploadPhoto(IFormFile photo)
         {
-            Supabase.Gotrue.Session? session = JsonConvert.DeserializeObject<Session>(HttpContext.Session.GetString("session"));
+            var session = JsonConvert.DeserializeObject<Session>(HttpContext.Session.GetString("session"));
 
-            if (session != null)
-            {
-                var service = ProfileService.UploadPhoto(photo, session.User.Id).Result;
-            }
+            if (session is not null)
+                await ProfileService.UploadPhoto(photo, session.User.Id);
 
             return RedirectToAction("Index", "Home");
         }

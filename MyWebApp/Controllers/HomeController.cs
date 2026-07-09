@@ -11,18 +11,15 @@ namespace MyWebApp.Controllers
     {
         public IActionResult Index()
         {
-            if (string.IsNullOrEmpty(HttpContext.Session.GetString("session")))
+            string? sessionJson = HttpContext.Session.GetString("session");
+
+            if (string.IsNullOrEmpty(sessionJson))
                 return RedirectToAction("Index", "Login");
 
-            Supabase.Gotrue.Session? session = JsonConvert.DeserializeObject<Session>(HttpContext.Session.GetString("session"));
-
-            ViewData["photo"] = HttpContext.Session.GetString("photoPath");             
-
+            ViewData["photo"] = HttpContext.Session.GetString("photoPath");
             ViewData["CustomNavMenu"] = NavigationService.GetMenuPages(2);
 
-            List<Hotel> hotels = HotelService.getAll();
-
-            return View(hotels);
+            return View(HotelService.getAll());
         }
 
         public IActionResult Privacy()

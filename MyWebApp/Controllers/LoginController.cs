@@ -23,20 +23,18 @@ namespace MyWebApp.Controllers
         }
         
         [HttpPost]
-        public IActionResult ValidateLogin(UserModel user)
+        public async Task<IActionResult> ValidateLogin(UserModel user)
         {
-            Supabase.Gotrue.Session? session = SupabaseAuthentication.SignIn(user.Email, user.Pwd).Result;
-            
-            if (session != null)
-            {
-                HttpContext.Session.SetString("session", JsonConvert.SerializeObject(session));
+            var session = await SupabaseAuthentication.SignIn(user.Email, user.Pwd);
 
-                return RedirectToAction("Index", "Home");
-            }
-            else
-            {
-                return RedirectToAction("Error", "Home");
-            }
+            if (session is null)
+                return RedirectToAction("Index", "Login");
+
+            HttpContext.Session.SetString(
+                "session",
+                JsonConvert.SerializeObject(session));
+
+            return RedirectToAction("Index", "Home");
         }
     }
 }

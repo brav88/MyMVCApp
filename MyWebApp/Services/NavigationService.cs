@@ -4,33 +4,42 @@ using MyWebApp.Models;
 namespace MyWebApp.Services
 {
     public static class NavigationService
-    {     
+    {
         public static List<NavigationPages> GetMenuPages(int userRole)
-        {            
-            if (userRole == 1) 
+        {
+            var pages = new List<NavigationPages>
             {
-                return new List<NavigationPages>
-                {
-                    new NavigationPages { Title="Home", Controller="Home", Action = "Index"},
-                    new NavigationPages { Title="Product", Controller="Product", Action = "Index"},                
-                    new NavigationPages { Title="Logout", Controller="Login", Action = "Logout"}
-                };
-            }
-            if (userRole == 2)
+                new() { Title = "Home", Controller = "Home", Action = "Index" }
+            };
+
+            switch (userRole)
             {
-                return new List<NavigationPages>
-                {
-                    new NavigationPages { Title="Home", Controller="Home", Action = "Index"},
-                    new NavigationPages { Title="Ticket", Controller="Ticket", Action = "Index"},
-                    new NavigationPages { Title="Logout", Controller="Login", Action = "Logout"},
-                    new NavigationPages { Title="Product", Controller="Product", Action = "Index"},
-                };
+                case 1:
+                    pages.Add(new NavigationPages
+                    {
+                        Title = "Product",
+                        Controller = "Product",
+                        Action = "Index"
+                    });
+                    break;
+
+                case 2:
+                    pages.AddRange(
+                    [
+                        new() { Title = "Ticket", Controller = "Ticket", Action = "Index" },
+                new() { Title = "Product", Controller = "Product", Action = "Index" }
+                    ]);
+                    break;
             }
 
-            return new List<NavigationPages>
-                {
-                    
-                };
+            pages.Add(new NavigationPages
+            {
+                Title = "Logout",
+                Controller = "Login",
+                Action = "Logout"
+            });
+
+            return pages;
         }
     }
 }

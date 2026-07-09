@@ -5,41 +5,28 @@ namespace MyWebApp.DatabaseHelper
 {
     public static class DatabaseSql
     {
-        private static String connectionString = "Data Source=SAMUEL\\SQLEXPRESS;Database=AdventureWorks2025;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Application Name=\"MyApp\";Command Timeout=0";
-        private static SqlConnection conn;
+        private static readonly string ConnectionString =
+            "Data Source=SAMUEL\\SQLEXPRESS;Database=AdventureWorks2025;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Application Name=\"MyApp\";Command Timeout=0";
 
-        public static SqlConnection getConnection()
+        public static DataTable ExecuteStoredProcedure(string storedProcedure, List<SqlParameter>? parameters = null)
         {
-            return conn;
-        }
-
-        public static DataTable executeStoredProcedure(string sp, List<SqlParameter> parameters)
-        {
-            using (conn = new SqlConnection(connectionString))
+            using var connection = new SqlConnection(ConnectionString);
+            using var command = new SqlCommand(storedProcedure, connection)
             {
-                conn.Open();
+                CommandType = CommandType.StoredProcedure
+            };
 
-                SqlCommand cmd = conn.CreateCommand();
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.CommandText = sp;
-                cmd.Connection = conn;
+            if (parameters is not null)
+                command.Parameters.AddRange(parameters.ToArray());
 
-                if (parameters != null)
-                {
-                    foreach (SqlParameter param in parameters)
-                    {
-                        cmd.Parameters.Add(param);
-                    }
-                }
+            connection.Open();
 
-                cmd.ExecuteNonQuery();
+            using var adapter = new SqlDataAdapter(command);
 
-                SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-                DataTable dt = new DataTable();
-                adapter.Fill(dt);
+            var dataTable = new DataTable();
+            adapter.Fill(dataTable);
 
-                return dt;
-            }
+            return dataTable;
         }
     }
 }

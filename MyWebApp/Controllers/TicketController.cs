@@ -9,30 +9,33 @@ namespace MyWebApp.Controllers
 {
     public class TicketController : Controller
     {
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString("session")))
                 return RedirectToAction("Index", "Login");
 
             ViewData["CustomNavMenu"] = NavigationService.GetMenuPages(2);
 
-            List<Ticket> ticketList = TicketService.getAll().Result;
-
-            return View(ticketList);
+            return View(await TicketService.GetAll());
         }
 
-        public IActionResult Detail(int id)
+        public async Task<IActionResult> Detail(int id)
         {
-            if (string.IsNullOrEmpty(HttpContext.Session.GetString("session")))
+            string? sessionJson = HttpContext.Session.GetString("session");
+
+            if (string.IsNullOrEmpty(sessionJson))
                 return RedirectToAction("Index", "Login");
 
-            Supabase.Gotrue.Session? session = JsonConvert.DeserializeObject<Session>(HttpContext.Session.GetString("session"));
+            var session = JsonConvert.DeserializeObject<Session>(sessionJson);
 
             ViewData["CustomNavMenu"] = NavigationService.GetMenuPages(2);
 
-            Ticket detail = TicketService.getTicketById(id).Result;
+            var detail = await TicketService.GetTicketById(id);
 
-            detail.ActiveSessionUserId = session.User.Id;
+            if (detail is null)
+                return NotFound();
+
+            detail.ActiveSessionUserId = session!.User.Id;
 
             return View(detail);
         }
@@ -52,14 +55,14 @@ namespace MyWebApp.Controllers
                 CreatedAt = DateTime.Now,
             };
 
-            TicketService.postComment(comment);
+            TicketService.PostComment(comment);
 
             return Redirect("Detail?id=" + ticketId);
         }
 
         public IActionResult DeleteComment(String ticketId, int commentId)
         {
-            TicketService.deleteComment(commentId);
+            TicketService.DeleteComment(commentId);
 
             return Redirect("Detail?id=" + ticketId);
         }

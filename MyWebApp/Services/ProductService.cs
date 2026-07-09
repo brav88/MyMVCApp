@@ -8,108 +8,106 @@ namespace MyWebApp.Services
 {
     public static class ProductService
     {
-        public static List<Product> getAll()
+        public static List<Product> GetAll()
         {
-            List<Product> list = new List<Product>();
+            var products = new List<Product>();
 
-            DataTable ds = DatabaseSql.executeStoredProcedure("[dbo].[uspGetProducts]", null);
+            DataTable? dataTable = DatabaseSql.ExecuteStoredProcedure("[dbo].[uspGetProducts]", null);
 
-            if (ds != null)
+            if (dataTable == null)
+                return products;
+
+            foreach (DataRow row in dataTable.Rows)
             {
-                foreach (DataRow dr in ds.Rows)
+                products.Add(new Product
                 {
-                    Product product = new Product();
-
-                    product.ProductID = (int)dr["ProductID"];
-                    product.ProductNumber = dr["ProductNumber"].ToString() ?? string.Empty;
-                    product.ProductName = dr["ProductName"].ToString() ?? string.Empty;
-                    product.ListPrice = (decimal)dr["ListPrice"];
-                    product.Color = dr["Color"].ToString() ?? string.Empty;
-                    product.SubCategory = dr["SubCategory"].ToString() ?? string.Empty;
-                    product.Category = dr["Category"].ToString() ?? string.Empty;
-                    product.Model = dr["Model"].ToString() ?? string.Empty;
-                    product.Size = dr["Size"].ToString() ?? string.Empty;
-                    product.Weight = dr["Weight"] == DBNull.Value ? null : (decimal)dr["Weight"];
-                    list.Add(product);
-                }
+                    ProductID = (int)row["ProductID"],
+                    ProductNumber = row["ProductNumber"].ToString() ?? string.Empty,
+                    ProductName = row["ProductName"].ToString() ?? string.Empty,
+                    ListPrice = (decimal)row["ListPrice"],
+                    Color = row["Color"].ToString() ?? string.Empty,
+                    SubCategory = row["SubCategory"].ToString() ?? string.Empty,
+                    Category = row["Category"].ToString() ?? string.Empty,
+                    Model = row["Model"].ToString() ?? string.Empty,
+                    Size = row["Size"].ToString() ?? string.Empty,
+                    Weight = row["Weight"] == DBNull.Value ? null : (decimal)row["Weight"]
+                });
             }
 
-            return list;
+            return products;
         }
 
-        public static ProductDetail getProductDetail(int id)
+        public static ProductDetail? GetProductDetail(int id)
         {
-            List<Product> list = new List<Product>();
-
-            List<SqlParameter> parameters = new List<SqlParameter>();
-            parameters.Add(new SqlParameter { ParameterName = "@id", Value = id });
-
-            DataTable ds = DatabaseSql.executeStoredProcedure("[dbo].[uspGetProductDetail]", parameters);
-
-            if (ds != null)
+            var parameters = new List<SqlParameter>
             {
-                foreach (DataRow dr in ds.Rows)
-                {
-                    ProductDetail detail = new ProductDetail();
+                new("@id", id)
+            };
 
-                    detail.ProductId = Convert.ToInt32(dr["ProductID"]);
-                    detail.ProductName = dr["ProductName"].ToString() ?? string.Empty;
-                    detail.ProductNumber = dr["ProductNumber"].ToString() ?? string.Empty;
-                    detail.MakeFlag = Convert.ToBoolean(dr["MakeFlag"]);
-                    detail.FinishedGoodsFlag = Convert.ToBoolean(dr["FinishedGoodsFlag"]);
-                    detail.Color = dr["Color"] == DBNull.Value ? null : dr["Color"].ToString();
-                    detail.SafetyStockLevel = Convert.ToInt16(dr["SafetyStockLevel"]);
-                    detail.ReorderPoint = Convert.ToInt16(dr["ReorderPoint"]);
-                    detail.CurrentStandardCost = Convert.ToDecimal(dr["CurrentStandardCost"]);
-                    detail.CurrentListPrice = Convert.ToDecimal(dr["CurrentListPrice"]);
-                    detail.Size = dr["Size"] == DBNull.Value ? null : dr["Size"].ToString();
-                    detail.SizeUnitMeasureCode = dr["SizeUnitMeasureCode"] == DBNull.Value ? null : dr["SizeUnitMeasureCode"].ToString();
-                    detail.WeightUnitMeasureCode = dr["WeightUnitMeasureCode"] == DBNull.Value ? null : dr["WeightUnitMeasureCode"].ToString();
-                    detail.Weight = dr["Weight"] == DBNull.Value ? null : (decimal?)Convert.ToDecimal(dr["Weight"]);
-                    detail.DaysToManufacture = Convert.ToInt32(dr["DaysToManufacture"]);
-                    detail.ProductLine = dr["ProductLine"] == DBNull.Value ? null : dr["ProductLine"].ToString();
-                    detail.Class = dr["Class"] == DBNull.Value ? null : dr["Class"].ToString();
-                    detail.Style = dr["Style"] == DBNull.Value ? null : dr["Style"].ToString();
-                    detail.SellStartDate = Convert.ToDateTime(dr["SellStartDate"]);
-                    detail.SellEndDate = dr["SellEndDate"] == DBNull.Value ? null : (DateTime?)Convert.ToDateTime(dr["SellEndDate"]);
-                    detail.DiscontinuedDate = dr["DiscontinuedDate"] == DBNull.Value ? null : (DateTime?)Convert.ToDateTime(dr["DiscontinuedDate"]);
-                    detail.TotalQuantityInStock = Convert.ToInt32(dr["TotalQuantityInStock"]);
+            DataTable? dataTable = DatabaseSql.ExecuteStoredProcedure(
+                "[dbo].[uspGetProductDetail]", parameters);
 
-                    return detail;
-                }
-            }
+            if (dataTable == null || dataTable.Rows.Count == 0)
+                return null;
 
-            return null;
+            DataRow row = dataTable.Rows[0];
+
+            return new ProductDetail
+            {
+                ProductId = Convert.ToInt32(row["ProductID"]),
+                ProductName = row["ProductName"].ToString() ?? string.Empty,
+                ProductNumber = row["ProductNumber"].ToString() ?? string.Empty,
+                MakeFlag = Convert.ToBoolean(row["MakeFlag"]),
+                FinishedGoodsFlag = Convert.ToBoolean(row["FinishedGoodsFlag"]),
+                Color = row["Color"] == DBNull.Value ? null : row["Color"].ToString(),
+                SafetyStockLevel = Convert.ToInt16(row["SafetyStockLevel"]),
+                ReorderPoint = Convert.ToInt16(row["ReorderPoint"]),
+                CurrentStandardCost = Convert.ToDecimal(row["CurrentStandardCost"]),
+                CurrentListPrice = Convert.ToDecimal(row["CurrentListPrice"]),
+                Size = row["Size"] == DBNull.Value ? null : row["Size"].ToString(),
+                SizeUnitMeasureCode = row["SizeUnitMeasureCode"] == DBNull.Value ? null : row["SizeUnitMeasureCode"].ToString(),
+                WeightUnitMeasureCode = row["WeightUnitMeasureCode"] == DBNull.Value ? null : row["WeightUnitMeasureCode"].ToString(),
+                Weight = row["Weight"] == DBNull.Value ? null : Convert.ToDecimal(row["Weight"]),
+                DaysToManufacture = Convert.ToInt32(row["DaysToManufacture"]),
+                ProductLine = row["ProductLine"] == DBNull.Value ? null : row["ProductLine"].ToString(),
+                Class = row["Class"] == DBNull.Value ? null : row["Class"].ToString(),
+                Style = row["Style"] == DBNull.Value ? null : row["Style"].ToString(),
+                SellStartDate = Convert.ToDateTime(row["SellStartDate"]),
+                SellEndDate = row["SellEndDate"] == DBNull.Value ? null : Convert.ToDateTime(row["SellEndDate"]),
+                DiscontinuedDate = row["DiscontinuedDate"] == DBNull.Value ? null : Convert.ToDateTime(row["DiscontinuedDate"]),
+                TotalQuantityInStock = Convert.ToInt32(row["TotalQuantityInStock"])
+            };
         }
 
-        public static void saveProductDetail(ProductDetail detail)
+        public static void SaveProductDetail(ProductDetail detail)
         {
-            List<SqlParameter> parameters = new List<SqlParameter>();
-            parameters.Add(new SqlParameter { ParameterName = "@ProductId", Value = (object)detail.ProductId ?? DBNull.Value });
-            parameters.Add(new SqlParameter { ParameterName = "@ProductName", Value = (object)detail.ProductName ?? DBNull.Value });
-            parameters.Add(new SqlParameter { ParameterName = "@ProductNumber", Value = (object)detail.ProductNumber ?? DBNull.Value });
-            parameters.Add(new SqlParameter { ParameterName = "@MakeFlag", Value = (object)detail.MakeFlag ?? DBNull.Value });
-            parameters.Add(new SqlParameter { ParameterName = "@FinishedGoodsFlag", Value = (object)detail.FinishedGoodsFlag ?? DBNull.Value });
-            parameters.Add(new SqlParameter { ParameterName = "@Color", Value = (object)detail.Color ?? DBNull.Value });
-            parameters.Add(new SqlParameter { ParameterName = "@SafetyStockLevel", Value = (object)detail.SafetyStockLevel ?? DBNull.Value });
-            parameters.Add(new SqlParameter { ParameterName = "@ReorderPoint", Value = (object)detail.ReorderPoint ?? DBNull.Value });
-            parameters.Add(new SqlParameter { ParameterName = "@CurrentStandardCost", Value = (object)detail.CurrentStandardCost ?? DBNull.Value });
-            parameters.Add(new SqlParameter { ParameterName = "@CurrentListPrice", Value = (object)detail.CurrentListPrice ?? DBNull.Value });
-            parameters.Add(new SqlParameter { ParameterName = "@Size", Value = (object)detail.Size ?? DBNull.Value });
-            parameters.Add(new SqlParameter { ParameterName = "@SizeUnitMeasureCode", Value = (object)detail.SizeUnitMeasureCode ?? DBNull.Value });
-            parameters.Add(new SqlParameter { ParameterName = "@WeightUnitMeasureCode", Value = (object)detail.WeightUnitMeasureCode ?? DBNull.Value });
-            parameters.Add(new SqlParameter { ParameterName = "@Weight", Value = (object)detail.Weight ?? DBNull.Value });
-            parameters.Add(new SqlParameter { ParameterName = "@DaysToManufacture", Value = (object)detail.DaysToManufacture ?? DBNull.Value });
-            parameters.Add(new SqlParameter { ParameterName = "@ProductLine", Value = (object)detail.ProductLine ?? DBNull.Value });
-            parameters.Add(new SqlParameter { ParameterName = "@Class", Value = (object)detail.Class ?? DBNull.Value });
-            parameters.Add(new SqlParameter { ParameterName = "@Style", Value = (object)detail.Style ?? DBNull.Value });
-            parameters.Add(new SqlParameter { ParameterName = "@SellStartDate", Value = (object)detail.SellStartDate ?? DBNull.Value });
-            parameters.Add(new SqlParameter { ParameterName = "@SellEndDate", Value = (object)detail.SellEndDate ?? DBNull.Value });
-            parameters.Add(new SqlParameter { ParameterName = "@DiscontinuedDate", Value = (object)detail.DiscontinuedDate ?? DBNull.Value });
-            parameters.Add(new SqlParameter { ParameterName = "@TotalQuantityInStock", Value = (object)detail.TotalQuantityInStock ?? DBNull.Value });
+            var parameters = new List<SqlParameter>
+            {
+                new("@ProductId", (object?)detail.ProductId ?? DBNull.Value),
+                new("@ProductName", detail.ProductName ?? (object)DBNull.Value),
+                new("@ProductNumber", detail.ProductNumber ?? (object)DBNull.Value),
+                new("@MakeFlag", detail.MakeFlag),
+                new("@FinishedGoodsFlag", detail.FinishedGoodsFlag),
+                new("@Color", detail.Color ?? (object)DBNull.Value),
+                new("@SafetyStockLevel", detail.SafetyStockLevel),
+                new("@ReorderPoint", detail.ReorderPoint),
+                new("@CurrentStandardCost", detail.CurrentStandardCost),
+                new("@CurrentListPrice", detail.CurrentListPrice),
+                new("@Size", detail.Size ?? (object)DBNull.Value),
+                new("@SizeUnitMeasureCode", detail.SizeUnitMeasureCode ?? (object)DBNull.Value),
+                new("@WeightUnitMeasureCode", detail.WeightUnitMeasureCode ?? (object)DBNull.Value),
+                new("@Weight", detail.Weight ?? (object)DBNull.Value),
+                new("@DaysToManufacture", detail.DaysToManufacture),
+                new("@ProductLine", detail.ProductLine ?? (object)DBNull.Value),
+                new("@Class", detail.Class ?? (object)DBNull.Value),
+                new("@Style", detail.Style ?? (object)DBNull.Value),
+                new("@SellStartDate", detail.SellStartDate),
+                new("@SellEndDate", detail.SellEndDate ?? (object)DBNull.Value),
+                new("@DiscontinuedDate", detail.DiscontinuedDate ?? (object)DBNull.Value),
+                new("@TotalQuantityInStock", detail.TotalQuantityInStock)
+            };
 
-
-            DataTable ds = DatabaseSql.executeStoredProcedure("[dbo].[uspUpdateProduct]", parameters);
+            DatabaseSql.ExecuteStoredProcedure("[dbo].[uspUpdateProduct]", parameters);
         }
     }
 }

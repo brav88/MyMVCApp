@@ -9,21 +9,23 @@ namespace MyWebApp.Controllers
     {       
         public IActionResult Index()
         {
-            List<Product> list = ProductService.getAll();
+            ViewData["CustomNavMenu"] = NavigationService.GetMenuPages(2);
 
-            return View(list);
+            return View(ProductService.GetAll());
         }
 
         public IActionResult Detail(int id)
         {
-            ProductDetail detail = ProductService.getProductDetail(id);
+            ViewData["CustomNavMenu"] = NavigationService.GetMenuPages(2);
 
-            return View(detail);
+            return View(ProductService.GetProductDetail(id));
         }
 
         public IActionResult Edit(ProductDetail detail)
         {
-            ProductService.saveProductDetail(detail);
+            ViewData["CustomNavMenu"] = NavigationService.GetMenuPages(2);
+
+            ProductService.SaveProductDetail(detail);
 
             return RedirectToAction("Detail", new { Id = detail.ProductId });
         }
