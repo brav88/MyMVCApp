@@ -4,6 +4,7 @@ using MyWebApp.Models;
 using MyWebApp.Services;
 using Newtonsoft.Json;
 using Supabase.Gotrue;
+using static System.Collections.Specialized.BitVector32;
 
 namespace MyWebApp.Controllers
 {
@@ -11,9 +12,12 @@ namespace MyWebApp.Controllers
     {
         public async Task<IActionResult> Index()
         {
-            if (string.IsNullOrEmpty(HttpContext.Session.GetString("session")))
+            var session = JsonConvert.DeserializeObject<Session>(HttpContext.Session.GetString("session"));
+
+            if (session == null)
                 return RedirectToAction("Index", "Login");
 
+            ViewData["photo"] = ProfileService.GetPhotoURLById(session.User.Id).Result;
             ViewData["CustomNavMenu"] = NavigationService.GetMenuPages(2);
 
             return View(await TicketService.GetAll());
@@ -52,7 +56,7 @@ namespace MyWebApp.Controllers
                 CommentText = commentText,
                 TicketId = Convert.ToInt32(ticketId),
                 CreatedBy = session.User.Id,
-                CreatedAt = DateTime.Now,
+                CreatedAt = DateTime.Now                
             };
 
             TicketService.PostComment(comment);

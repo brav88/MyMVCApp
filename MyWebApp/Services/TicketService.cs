@@ -18,14 +18,14 @@ namespace MyWebApp.Services
 
         public static async Task<Ticket> GetTicketById(int id)
         {
-            await client.InitializeAsync();
+             await client.InitializeAsync();
 
             var ticket = (await client.From<Ticket>().Where(x => x.Id == id).Get()).Model;
 
             if (ticket is not null)
-                ticket.Comments = (await client.From<Comment>().Where(x => x.TicketId == id).Get()).Models;
-            
-            return ticket;           
+                ticket.Comments = (await client.From<CommentProfiles>().Where(x => x.TicketId == id).Get()).Models;
+                            
+            return ticket;            
         }
 
         public static async void PostComment(Comment comment)

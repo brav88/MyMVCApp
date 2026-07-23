@@ -61,7 +61,7 @@ CREATE TABLE comments (
 );
 
 -- Insert 1: Un comentario estándar de soporte
-INSERT INTO comments (ticket_id, commment_text, created_by, created_at)
+INSERT INTO comments (ticket_id, comment_text, created_by, created_at)
 VALUES (
     1, 
     'El usuario reporta que no puede acceder al módulo de facturación. Se procede a revisar permisos.', 
@@ -70,7 +70,7 @@ VALUES (
 );
 
 -- Insert 2: Comentario breve usando el valor por defecto de created_at
-INSERT INTO comments (ticket_id, commment_text, created_by)
+INSERT INTO comments (ticket_id, comment_text, created_by)
 VALUES (
     1, 
     'Permisos verificados. El problema persiste.', 
@@ -78,7 +78,7 @@ VALUES (
 );
 
 -- Insert 3: Comentario con una marca de tiempo específica en el pasado
-INSERT INTO comments (ticket_id, commment_text, created_by, created_at)
+INSERT INTO comments (ticket_id, comment_text, created_by, created_at)
 VALUES (
     1, 
     'Incidencia escalada al equipo de DevOps debido a una caída intermitente en el servidor de base de datos.', 
@@ -87,14 +87,14 @@ VALUES (
 );
 
 -- Insert 4: Comentario simulando la respuesta del cliente
-INSERT INTO comments (ticket_id, commment_text, created_by)
+INSERT INTO comments (ticket_id, comment_text, created_by)
 VALUES (
     1, 
     'Ya puedo ver el botón de descarga, gracias por la rápida solución.', 
     'c9a646d3-9021-4b12-a123-bcdef456789a'
 );
 
-INSERT INTO comments (ticket_id, commment_text, created_by)
+INSERT INTO comments (ticket_id, comment_text, created_by)
 VALUES (
     2, 
     'Que pasa que no me resuelven nada???', 

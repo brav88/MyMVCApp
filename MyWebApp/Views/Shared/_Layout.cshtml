@@ -19,7 +19,7 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">                    
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <partial name="_NavMenu" />
                 </div>
             </div>
@@ -29,21 +29,48 @@
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
-    </div>   
+    </div>
 
     @* OFFCANVA *@
-    <div class="offcanvas offcanvas-end" data-bs-backdrop="static" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    <div class="offcanvas offcanvas-end border-0 shadow" data-bs-backdrop="static" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+        <div class="offcanvas-header border-bottom py-3">
+            <h5 class="offcanvas-title fw-bold text-dark d-flex align-items-center gap-2" id="offcanvasExampleLabel">
+                <i class="bi bi-person-circle text-primary"></i> Mi Perfil
+            </h5>
+            <button type="button" class="btn-close shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
-        <div class="offcanvas-body">
-            <img src="@ViewData["photo"]"
-                 class="rounded float-start" style="width:100px;height:100px" alt="...">
-            <form asp-controller="Profile" asp-action="UploadPhoto" method="post" enctype="multipart/form-data">
-                <input type="file" name="photo" />
-                <button type="submit">upload</button>
-            </form>
+        <div class="offcanvas-body d-flex flex-column align-items-center justify-content-between p-4">
+            <div class="w-100 text-center mb-4">
+                <div class="position-relative d-inline-block mb-4">
+                    <div class="ratio ratio-1x1 rounded-circle overflow-hidden border border-4 border-white shadow" style="width: 130px; margin: 0 auto;">
+                        <img src="@(ViewData["photo"] ?? "/img/default-avatar.png")"
+                             class="img-fluid object-fit-cover"
+                             alt="Foto de perfil">
+                    </div>
+                    <span class="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center shadow" style="width: 32px; height: 32px; border: 2px solid #fff;">
+                        <i class="bi bi-camera-fill" style="font-size: 0.85rem;"></i>
+                    </span>
+                </div>
+                <h6 class="fw-semibold text-secondary mb-1">Actualizar foto de perfil</h6>
+                <p class="text-muted small mb-4">Selecciona una imagen en formato JPG o PNG.</p>
+                <form asp-controller="Profile" asp-action="UploadPhoto" method="post" enctype="multipart/form-data" class="text-start">
+                    <div class="mb-4">
+                        <label for="photoInput" class="form-label small fw-bold text-muted">Seleccionar archivo</label>
+                        <input class="form-control form-control-sm" type="file" id="photoInput" name="photo" accept="image/*" required>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary d-flex align-items-center justify-content-center gap-2 py-2 fw-semibold">
+                            <i class="bi bi-cloud-arrow-up-fill"></i> Subir imagen
+                        </button>
+                        <button type="button" class="btn btn-light text-muted py-2 fw-semibold" data-bs-dismiss="offcanvas">
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="w-100 text-center pt-3 border-top">
+                <span class="text-muted" style="font-size: 0.75rem;">Asegúrate de que la imagen sea menor a 2MB.</span>
+            </div>
         </div>
     </div>
 

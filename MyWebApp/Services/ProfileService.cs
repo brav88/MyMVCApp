@@ -58,6 +58,13 @@ namespace MyWebApp.Services
                 .Set(x => x.AvatarUrl, publicUrl)
                 .Update();
         }
+
+        public static async Task<string> GetPhotoURLById(string id)
+        {
+            await client.InitializeAsync();
+
+            return (await client.From<Profile>().Where(x => x.Id == id).Get()).Model.AvatarUrl;
+        }
     }
 }
 

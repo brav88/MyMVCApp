@@ -11,12 +11,12 @@ namespace MyWebApp.Controllers
     {
         public IActionResult Index()
         {
-            string? sessionJson = HttpContext.Session.GetString("session");
+            var session = JsonConvert.DeserializeObject<Session>(HttpContext.Session.GetString("session"));            
 
-            if (string.IsNullOrEmpty(sessionJson))
+            if (session == null)
                 return RedirectToAction("Index", "Login");
 
-            ViewData["photo"] = HttpContext.Session.GetString("photoPath");
+            ViewData["photo"] = ProfileService.GetPhotoURLById(session.User.Id).Result;
             ViewData["CustomNavMenu"] = NavigationService.GetMenuPages(2);
 
             return View(HotelService.getAll());

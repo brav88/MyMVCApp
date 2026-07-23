@@ -42,9 +42,9 @@ namespace MyWebApp.Models
         [Column("due_date")]
         public DateTime? DueDate { get; set; }
 
-        public List<Comment>? Comments { get; set; }
+        public List<CommentProfiles>? Comments { get; set; }
 
-        public string ActiveSessionUserId { get; set; }
+        public string? ActiveSessionUserId { get; set; }
     }
 
     [Table("comments")]
@@ -56,7 +56,7 @@ namespace MyWebApp.Models
         [Column("ticket_id")]
         public long TicketId { get; set; }
 
-        [Column("commment_text")]
+        [Column("comment_text")]
         public string? CommentText { get; set; }
 
         [Column("created_by")]
@@ -64,6 +64,34 @@ namespace MyWebApp.Models
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }
+    }
+
+    [Table("v_comments_with_profiles")]
+    public class CommentProfiles : BaseModel
+    {
+        [PrimaryKey("comment_id", false)] // Indicamos que es la llave, el "false" es porque no es auto-generada al insertar en una vista
+        public long CommentId { get; set; }
+
+        [Column("ticket_id")]
+        public long TicketId { get; set; }
+
+        [Column("comment_text")] // Mantiene el typo exacto de tu base de datos (con tres 'm')
+        public string? CommentText { get; set; }
+
+        [Column("created_at")]
+        public DateTime CreatedAt { get; set; }
+
+        [Column("user_id")]
+        public string? UserId { get; set; } // UUID de Postgres se mapea como string o Guid
+
+        [Column("avatar_url")]
+        public string? AvatarUrl { get; set; }
+
+        [Column("full_name")]
+        public string? FullName { get; set; }
+
+        [Column("user_email")]
+        public string? UserEmail { get; set; }
     }
 }
 

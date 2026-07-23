@@ -30,9 +30,7 @@ namespace MyWebApp.Controllers
             if (session is null)
                 return RedirectToAction("Index", "Login");
 
-            HttpContext.Session.SetString(
-                "session",
-                JsonConvert.SerializeObject(session));
+            HttpContext.Session.SetString("session", JsonConvert.SerializeObject(session));
 
             return RedirectToAction("Index", "Home");
         }
